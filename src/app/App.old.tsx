@@ -8,14 +8,9 @@ import nexo from './NexoClient';
 import NexoSyncRoute from './NexoSyncRoute';
 import { DarkModeProvider } from './DarkModeProvider';
 import './I18n';
-import '@nimbus-ds/styles/dist/index.css'; 
-
-import Sidedropibar from '@/components/Sidedropibar';
-
 
 const App: React.FC = () => {
   const [isConnect, setIsConnect] = useState(false);
-
 
   useEffect(() => {
     if (!isConnect) {
@@ -47,7 +42,6 @@ const App: React.FC = () => {
       <DarkModeProvider>
         <ToastProvider>
           <BrowserRouter>
-          <Sidedropibar/>   
             <NexoSyncRoute>
               <Router />
             </NexoSyncRoute>

@@ -35,7 +35,7 @@ const Home: React.FC = () => {
   return (
     <Page maxWidth="800px">
       <Page.Header
-        title="App Template"
+        title="Dashboard"
         buttonStack={
           <Responsive
             mobileContent={
@@ -49,15 +49,11 @@ const Home: React.FC = () => {
             }
             desktopContent={
               <Box display="flex" gap="2">
-                <Button onClick={() => navigate('/examples')}>
-                  <Icon source={<PictureIcon />} color="currentColor" />
-                  Exemplos
-                </Button>
                 <Button
                   appearance="primary"
                   onClick={() => goTo(nexo, '/orders')}
                 >
-                  Ir as vendas
+                  Ir a ventas
                 </Button>
               </Box>
             }
