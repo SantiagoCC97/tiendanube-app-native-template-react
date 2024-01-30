@@ -28,22 +28,33 @@ import {
 } from '@nimbus-ds/patterns';
 import { UploadIcon, MenuIcon, EcosystemIcon } from '@nimbus-ds/icons';
 import { Responsive } from '@/components';
-import Archiveico from '@/components/Icons/Archiveico';
 import { AiOutlineBranches } from 'react-icons/ai';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { BsAlignCenter } from 'react-icons/bs';
+import ModalAsNew from './ModalAsNew';
+import ModalAsExist from './ModalAsExist';
 
 const ProductListDropi: React.FC = () => {
   useEffect(() => {
     navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
   }, []);
-
+  const [ModalAsNe, setModalAsNew] = useState<boolean>(false);
   const [ModalOpen, setModalOpen] = useState<boolean>(false);
+  const [ModalAsExis, setModalAsExist] = useState<boolean>(false);
 
   return (
     //Esto debe ser un ciclo que recorra los productos dropi.
-
     <>
+      {ModalAsNe ? (
+        <ModalAsNew toogle={ModalAsNe} setToogle={setModalAsNew} />
+      ) : (
+        <></>
+      )}
+      {ModalAsExis ? (
+        <ModalAsExist toogle={ModalAsExis} setToogle={setModalAsExist} />
+      ) : (
+        <></>
+      )}
+
       <Page maxWidth="1200px">
         <Page.Header
           buttonStack={
@@ -51,7 +62,7 @@ const ProductListDropi: React.FC = () => {
               <Popover
                 content={
                   <Box display="flex" flexDirection="column" width="100%">
-                    <MenuButton label="Crear productos seleccionados" />  
+                    <MenuButton label="Crear productos seleccionados" />
                   </Box>
                 }
                 padding="small"
@@ -96,7 +107,7 @@ const ProductListDropi: React.FC = () => {
                     <Button
                       appearance="neutral"
                       onClick={function noRefCheck() {
-                        setModalOpen(false);
+                        setModalOpen(!false);
                       }}
                     >
                       Cancelar
@@ -148,7 +159,7 @@ const ProductListDropi: React.FC = () => {
                       <Table.Cell width="100px">Precio</Table.Cell>
                       <Table.Cell width="100px">Promocional</Table.Cell>
                       <Table.Cell width="120px">Bodega</Table.Cell>
-                      <Table.Cell width="120px" >Acciones Rapidas</Table.Cell>
+                      <Table.Cell width="120px">Acciones Rapidas</Table.Cell>
                     </DataTable.Header>
                   }
                 >
@@ -211,10 +222,19 @@ const ProductListDropi: React.FC = () => {
                           <IconButton
                             size="2rem"
                             source={<AiOutlineBranches />}
+                            onClick={function noRefCheck() {
+                              setModalAsExist(!ModalAsExis);
+                            }}
                           />
                         </Tooltip>
-                        <Tooltip content="Crear nuevo producto">
-                          <IconButton size="2rem" source={<AiOutlinePlus />} />
+                        <Tooltip content="Importar como nuevo producto">
+                          <IconButton
+                            size="2rem"
+                            source={<AiOutlinePlus />}
+                            onClick={function noRefCheck() {
+                              setModalAsNew(!ModalAsNe);
+                            }}
+                          />
                         </Tooltip>
                       </Box>
                     </Table.Cell>
