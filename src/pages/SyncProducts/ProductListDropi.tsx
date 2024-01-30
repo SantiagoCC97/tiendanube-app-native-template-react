@@ -1,61 +1,110 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { navigateHeader } from '@tiendanube/nexo';
 import { nexo } from '@/app';
 import {
   Alert,
   Box,
-  Button, 
+  Button,
+  Card,
   Icon,
   IconButton,
   Input,
   Link,
+  Modal,
   Popover,
+  Select,
   Table,
   Tag,
   Text,
   Thumbnail,
+  Tooltip,
 } from '@nimbus-ds/components';
-import { DataList, DataTable, Layout, MenuButton, Page } from '@nimbus-ds/patterns';
-import { UploadIcon } from '@nimbus-ds/icons';
+import {
+  DataList,
+  DataTable,
+  Layout,
+  MenuButton,
+  Page,
+} from '@nimbus-ds/patterns';
+import { UploadIcon, MenuIcon, EcosystemIcon } from '@nimbus-ds/icons';
 import { Responsive } from '@/components';
 import Archiveico from '@/components/Icons/Archiveico';
+import { AiOutlineBranches } from 'react-icons/ai';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { BsAlignCenter } from 'react-icons/bs';
 
 const ProductListDropi: React.FC = () => {
   useEffect(() => {
     navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
   }, []);
 
+  const [ModalOpen, setModalOpen] = useState<boolean>(false);
+
   return (
     //Esto debe ser un ciclo que recorra los productos dropi.
+
     <>
       <Page maxWidth="1200px">
         <Page.Header
           buttonStack={
             <>
-              <IconButton size="2rem" source={<UploadIcon />} /> 
               <Popover
                 content={
                   <Box display="flex" flexDirection="column" width="100%">
-                    <MenuButton label="Acción secundaria" />
-                    <MenuButton label="Acción secundaria" />
-                    <MenuButton label="Acción secundaria" />
+                    <MenuButton label="Crear productos seleccionados" />  
                   </Box>
                 }
                 padding="small"
               >
                 <Button>
                   Acciones masivas
-                  <Icon source={<UploadIcon />} />
+                  <Icon source={<MenuIcon />} />
                 </Button>
               </Popover>
-              <Button>
-                Acción secundaria
-                <Icon source={<UploadIcon />} />
+              <Button
+                appearance="primary"
+                onClick={function noRefCheck() {
+                  setModalOpen(true);
+                }}
+              >
+                <Icon color="neutral-background" source={<EcosystemIcon />} />
+                Seleccionar tienda
               </Button>
-              <Button appearance="primary">
-                <Icon color="neutral-background" source={<UploadIcon />} />
-                Acción primaria
-              </Button>
+              <Modal
+                onDismiss={function noRefCheck() {
+                  setModalOpen(false);
+                }}
+                open={ModalOpen}
+              >
+                <React.Fragment key=".0">
+                  <Modal.Body padding="none">
+                    <Card>
+                      <Card.Header title="Selecciona la tienda" />
+                      <Card.Body>
+                        <Box display="flex" flexDirection="column" gap="4">
+                          <Select appearance="neutral" id="Id" name="Name">
+                            <Select.Option
+                              label="Tienda de prueba"
+                              value="Option 6"
+                            />
+                          </Select>
+                        </Box>
+                      </Card.Body>
+                    </Card>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button
+                      appearance="neutral"
+                      onClick={function noRefCheck() {
+                        setModalOpen(false);
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button appearance="primary">Aceptar</Button>
+                  </Modal.Footer>
+                </React.Fragment>
+              </Modal>
             </>
           }
           subtitle=""
@@ -67,9 +116,6 @@ const ProductListDropi: React.FC = () => {
           <Box display="flex" flexDirection="column" gap="2">
             <Box display="flex" gap="1">
               <Input.Search placeholder="Buscar" />
-              <Button>
-                <Icon color="currentColor" source={<UploadIcon />} />
-              </Button>
             </Box>
           </Box>
         </Page.Header>
@@ -80,7 +126,7 @@ const ProductListDropi: React.FC = () => {
           }}
         >
           <Layout columns="1">
-            <Responsive 
+            <Responsive
               desktopContent={
                 <DataTable
                   footer={
@@ -98,15 +144,15 @@ const ProductListDropi: React.FC = () => {
                       checkbox={{ checked: false, name: 'check-all-rows' }}
                     >
                       <Table.Cell width="auto">Producto</Table.Cell>
-                      <Table.Cell width="88px">Stock</Table.Cell>
-                      <Table.Cell width="88px">Precio</Table.Cell>
-                      <Table.Cell width="88px">Promocional</Table.Cell>
-                      <Table.Cell width="150px">Variantes</Table.Cell>
-                      <Table.Cell width="80px">Acciones</Table.Cell>
+                      <Table.Cell width="100px">Stock</Table.Cell>
+                      <Table.Cell width="100px">Precio</Table.Cell>
+                      <Table.Cell width="100px">Promocional</Table.Cell>
+                      <Table.Cell width="120px">Bodega</Table.Cell>
+                      <Table.Cell width="120px" >Acciones Rapidas</Table.Cell>
                     </DataTable.Header>
                   }
                 >
-                 <DataTable.Row
+                  <DataTable.Row
                     backgroundColor={{
                       hover: 'neutral-surface',
                       rest: 'neutral-background',
@@ -119,39 +165,62 @@ const ProductListDropi: React.FC = () => {
                           alt="Nombre del producto"
                           aspectRatio="1/1"
                           width="64px"
+                          src="https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=943&q=80"
                         />
                         <Box display="flex" flexDirection="column" gap="1">
                           <Text color="primary-interactive">
-                            Nombre del producto
+                            Zapaticos melos
                           </Text>
-                          <Tag appearance="warning">Tag de producto</Tag>
+                          <Tag appearance="warning">75554</Tag>
+                          <Text>SKU: D383</Text>
                         </Box>
                       </Box>
                     </Table.Cell>
                     <Table.Cell>
-                      <Input placeholder="0" type="number" />
+                      <Input
+                        placeholder="0"
+                        type="number"
+                        value="100"
+                        disabled={true}
+                      />
                     </Table.Cell>
                     <Table.Cell>
-                      <Input append="R$" placeholder="0" type="number" />
+                      <Input
+                        append="$"
+                        placeholder="0"
+                        type="number"
+                        value="3000"
+                        disabled={true}
+                      />
                     </Table.Cell>
                     <Table.Cell>
-                      <Input append="R$" placeholder="0" type="number" />
+                      <Input
+                        append="$"
+                        placeholder="0"
+                        type="number"
+                        value="2500"
+                        disabled={true}
+                      />
                     </Table.Cell>
                     <Table.Cell>
-                      <Text>
-                        Variante 1 / Variante 2 / Variante 3 / Variante 4
-                      </Text>
+                      <Text>Bodega la mia</Text>
                     </Table.Cell>
                     <Table.Cell>
                       <Box display="flex" gap="2">
-                        <IconButton size="2rem" source={<Archiveico />} />
-                        <IconButton size="2rem" source={<Archiveico />} />
+                        <Tooltip content="Vincular con producto existente">
+                          <IconButton
+                            size="2rem"
+                            source={<AiOutlineBranches />}
+                          />
+                        </Tooltip>
+                        <Tooltip content="Crear nuevo producto">
+                          <IconButton size="2rem" source={<AiOutlinePlus />} />
+                        </Tooltip>
                       </Box>
                     </Table.Cell>
                   </DataTable.Row>
                 </DataTable>
               }
-
               mobileContent={
                 <>
                   <Box px="4">
@@ -171,10 +240,7 @@ const ProductListDropi: React.FC = () => {
                           Nombre del producto
                         </Text>
                         <Tag appearance="warning">
-                          <Icon
-                            color="currentColor"
-                            source={<UploadIcon />}
-                          />
+                          <Icon color="currentColor" source={<UploadIcon />} />
                           Estado
                         </Tag>
                         <Text>Stock</Text>
