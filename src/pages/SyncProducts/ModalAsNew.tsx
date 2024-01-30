@@ -9,7 +9,7 @@ interface MiComponenteProps {
 
 const ModalAsNew: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
 
-  return (
+  return ( 
     <>
       <Modal
         onDismiss={function noRefCheck() {
