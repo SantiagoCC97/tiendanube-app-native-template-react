@@ -141,7 +141,7 @@ const Home: React.FC = () => {
                       {t('home.second-card.create-products')}
                     </Button>
                     <Button onClick={() => navigate('/products')}>
-                      Produtos
+                      Productos
                     </Button>
                   </Card.Footer>
                 </Card>

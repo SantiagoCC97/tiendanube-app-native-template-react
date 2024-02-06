@@ -16,3 +16,27 @@ body {
 .itsyou {
 margin-left: 10px;
 }
+
+.div-pad{
+margin-top: 05px;
+
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px; 
+}
+
+.test {
+  display: flex;
+  align-items: center;
+ 
+}
+
+.paginator {
+  display: flex;
+    align-items: center;
+    justify-content: center;
+}

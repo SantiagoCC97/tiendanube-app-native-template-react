@@ -1,69 +1,88 @@
-import React, { useEffect, useState } from 'react';
-import { navigateHeader } from '@tiendanube/nexo';
-import { nexo } from '@/app';
-import { Box, Button, Card, Modal } from '@nimbus-ds/components';
-import { FormField } from '@nimbus-ds/patterns';
+import { Fragment, FC, useState } from 'react';
+import { Button, Card, Modal, Text } from '@nimbus-ds/components'; 
 
-const ModalSelectToken: React.FC = () => {
-  useEffect(() => {
-    navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
-  }, []);
- 
-  const [ModalOpen, setModalOpen] = useState<boolean>(false);
+interface MiComponenteProps {
+  toogle: boolean;
+  setToogle: (flag: boolean) => void;
+}
 
- 
+interface Tienda {
+  id: number;
+  nombre: string;
+}
 
+const tiendaDePrueba: Tienda = { id: 1, nombre: 'Tienda de prueba' };
+const otraTienda: Tienda = { id: 2, nombre: 'Otra tienda' };
+
+const Tiendas = {
+  tienda1: tiendaDePrueba,
+  tienda2: otraTienda,
+};
+
+const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
+
+  const [tiendaSeleccionada, setTiendaSeleccionada] = useState<number | null>(
+    null,
+  );
+
+  const selectedShop = (id: number) => {
+    setTiendaSeleccionada(id);
+  };
+
+  
   return (
     <>
-    <Button  onClick={function noRefCheck() {
-          setModalOpen(true);
-        }}>
-      Agregar Token
-    </Button>
-    <Modal
-      onDismiss={function noRefCheck() {
-        setModalOpen(false);
-      }}
-      open={ModalOpen}
-    >
-      <React.Fragment key=".0">
-        
-        <Modal.Body padding="none">
-        <Card>
-          <Card.Header title="Agregar token" />
-          <Card.Body>
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="4"
+      <Modal
+        onDismiss={function noRefCheck() {
+          setToogle(false);
+        }}
+        open={toogle}
+      >
+        <Fragment key=".0">
+          <Modal.Header title="Selecciona tienda" />
+          <Modal.Body padding="none">
+            {Object.values(Tiendas).map((tienda) => (
+              <div className="div-pad">
+                <Card
+                  key={tienda.id}
+                  onClick={() => selectedShop(tienda.id)}
+                  backgroundColor={
+                    tiendaSeleccionada === tienda.id
+                      ? 'primary-surface'
+                      : 'neutral-surface'
+                  }
+                >
+                  <div className="test">
+                    <img
+                      className="avatar"
+                      width="50px"
+                      height="50px"                     
+                      src="https://previews.123rf.com/images/aprillrain/aprillrain2212/aprillrain221200638/196354278-imagen-de-caricatura-de-un-astronauta-sentado-en-una-luna-ilustraci%C3%B3n-de-alta-calidad.jpg"
+                    />
+                    <Text  fontSize="highlight" lineHeight="base">
+                      {tienda.nombre}
+                    </Text>
+                  </div>
+                </Card>
+              </div>
+            ))}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              appearance="neutral"
+              onClick={function noRefCheck() {
+                setToogle(false);
+              }}
             >
-              <FormField.Input
-               id="shopname"
-                label="Nombre de la tienda"
-                placeholder="Ejemplo: Tienda de ejemplo"
-              />
-              <FormField.Textarea
-                id="token"
-                label="Pega aquí el token"
-                lines={5}
-              />
-            </Box>
-          </Card.Body>
-        </Card>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button appearance="neutral">
-            Cancelar
-          </Button>
-          <Button appearance="primary">
-            Aceptar
-          </Button>
-        </Modal.Footer>
-      </React.Fragment>
-    </Modal>
-  </>
+              Cancelar
+            </Button>
+            <Button appearance="primary">Aceptar</Button>
+          </Modal.Footer>
+        </Fragment>
+      </Modal>
+    </>
   );
 };
 
-export default ModalSelectToken;
+export default ModalSelectShop;
 //Limpiar el texto de la nota si la orden se envía exitosamente
