@@ -40,7 +40,7 @@ const ModalAddToken: React.FC = () => {
               <FormField.Input
                id="shopname"
                 label="Nombre de la tienda"
-                placeholder="Ejemplo: Tienda de ejemplo"
+                placeholder="Ejemplo: MiTienda  "
               />
               <FormField.Textarea
                 id="token"

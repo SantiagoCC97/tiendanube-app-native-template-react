@@ -1,9 +1,9 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Home, Products, Testing, GeneralSettings, TokensSync, SyncProducts, SyncedProducts } from '@/pages';   
+import {  Products, Testing, GeneralSettings, TokensSync, SyncProducts, SyncedProducts, Dashboard } from '@/pages';    
 const Router: React.FC = () => (
   <Routes>
-    <Route path="/" element={<Home />} />
+    <Route path="/" element={<Dashboard />} />
     <Route path="/products" element={<Products />} />  
     <Route path="/testing" element={<Testing />} />     
     <Route path='/settings' element={<GeneralSettings/>}/>

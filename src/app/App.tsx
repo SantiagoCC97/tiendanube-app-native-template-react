@@ -47,10 +47,13 @@ const App: React.FC = () => {
       <DarkModeProvider>
         <ToastProvider>
           <BrowserRouter>
+          <div className='test'>
           <Sidedropibar/>   
             <NexoSyncRoute>
               <Router />
             </NexoSyncRoute>
+          </div>
+          
           </BrowserRouter>
         </ToastProvider>
       </DarkModeProvider>

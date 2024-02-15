@@ -40,3 +40,8 @@ margin-top: 05px;
     align-items: center;
     justify-content: center;
 }
+
+.amix{
+  display: flex;
+
+}

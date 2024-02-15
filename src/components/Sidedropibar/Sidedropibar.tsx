@@ -1,10 +1,5 @@
-import { 
-  Box,
-  Button,
-  Icon,
-  Sidebar 
-} from '@nimbus-ds/components';
-import { Menu, MenuButton } from '@nimbus-ds/patterns';
+import { Box, Button, Icon, Tooltip } from '@nimbus-ds/components';
+import { Menu } from '@nimbus-ds/patterns';
 import { useEffect, useState } from 'react';
 import Logo from '../Logo/Logo';
 import SlidersIco from '../Icons/Slidericons';
@@ -12,81 +7,81 @@ import Linkico from '../Icons/Linkicons';
 import Archiveico from '../Icons/Archiveico';
 import Uploadico from '../Icons/Uploadico';
 import { useNavigate } from 'react-router-dom';
+import Homeico from '../Icons/Homeico';
 
 const Sidedropibar = () => {
-
-
   const navigate = useNavigate();
-  const [SideOpen, setSideOpen] = useState<boolean>(false);
+  const [actualPage, setactualPage] =  useState<number>(1);
 
   useEffect(() => {}, []);
 
-  return (
-    <>
-      <Button
-        onClick={function noRefCheck() {
-          setSideOpen(true);
-        }}
-      >
-        Abrir
-      </Button>
+    
 
-      <Sidebar
-        maxWidth="280px"
-        onRemove={function noRefCheck() {
-          setSideOpen(false);
-        }}
-        padding="small"
-        position="left"
-        zIndex="100"
-        open={SideOpen}
-      >
-        <Menu>
-          <Menu.Header>
-            <Box alignItems="center" display="flex" gap="2" width="100%">
-              <Icon source={<Logo />} />
-            </Box>
-          </Menu.Header>
-          <Menu.Body>
-            <Menu.Section>
-              <MenuButton label="Inicio"   onClick={() => navigate('/')} />
-            </Menu.Section>
-            <Menu.Section title="Configuraciones">
-              <MenuButton
-                label="Configuración General"
-                startIcon={SlidersIco}
-                onClick={() => navigate('/settings')}
-              />
-              {/* <MenuButton label="Clientes" startIcon={function noRefCheck() {}}>
-                <Tag appearance="primary">Nuevo</Tag>
-              </MenuButton> */}
-              <MenuButton label="Configuración Tokens" startIcon={Linkico}  onClick={() => navigate('/tokens')} />
-            </Menu.Section>
-            <Menu.Section title="Productos Dropi">
-              <MenuButton label="Importar Productos" startIcon={Uploadico}  onClick={() => navigate('/syncproducts')}  />
-              <MenuButton
-                label="Información Sincronizada"
-                startIcon={Archiveico}
-              />
-            </Menu.Section>
-            {/* <Menu.Section title="Potenciar">
-              <MenuButton
-                label="Mis aplicaciones"
-                startIcon={function noRefCheck() {}}
-              />
-              <MenuButton
-                label="Canales de venta"
-                startIcon={function noRefCheck() {}}
-              />
-            </Menu.Section> */}
-          </Menu.Body>
-          <Menu.Footer
-            label="Configuración"
-            //startIcon={function noRefCheck(){}}
-          />
-        </Menu>
-      </Sidebar>
-    </>
+
+
+  return (
+    <Box
+      display="flex"
+      flex="0 1 auto"
+      width="4.1rem"
+      height="40vh"
+      borderColor="neutral-surfaceHighlight"
+      borderStyle="solid"
+      borderWidth="none"
+      borderRadius="6"
+      position="sticky"
+      left="0"
+      top="0"
+      overflow="hidden"
+    >
+      <Menu>
+        <Menu.Header>
+          <Icon source={<Logo />} />
+        </Menu.Header>
+
+        <Menu.Body>
+          <Box onClick={() => navigate('/')}>
+            <Tooltip content="Inicio" position="right">
+              <Button appearance={actualPage == 1 ? "primary" : "transparent"} onClick={()=>setactualPage(1)}>
+                <Icon color="currentColor" source={<Homeico />} />
+              </Button>
+            </Tooltip>
+          </Box>
+
+          <Box onClick={() => navigate('/settings')}>
+            <Tooltip content="Configuración General" position="right">
+              <Button appearance={actualPage == 2 ? "primary" : "transparent"} onClick={()=>setactualPage(2)}>
+                <Icon color="currentColor" source={<SlidersIco />} />
+              </Button>
+            </Tooltip>
+          </Box>
+
+          <Box onClick={() => navigate('/tokens')}>
+            <Tooltip content="Configuración de tokens" position="right">
+              <Button appearance={actualPage == 3 ? "primary" : "transparent"} onClick={()=>setactualPage(3)}>
+                <Icon color="currentColor" source={<Linkico />} />
+              </Button>
+            </Tooltip>
+          </Box>
+
+          <Box onClick={() => navigate('/syncproducts')}>
+            <Tooltip content="Importar productos" position="right">
+              <Button appearance={actualPage == 4 ? "primary" : "transparent"} onClick={()=>setactualPage(4)}>
+                <Icon color="currentColor" source={<Uploadico />} />
+              </Button>
+            </Tooltip>
+          </Box>
+
+          <Box onClick={() => navigate('/synced')}>
+            <Tooltip content="Productos sincronizados" position="right">
+              <Button appearance={actualPage == 5 ? "primary" : "transparent"} onClick={()=>setactualPage(5)}>
+                <Icon color="currentColor" source={<Archiveico />} />
+              </Button>
+            </Tooltip>
+          </Box>
+        </Menu.Body>
+      </Menu>
+    </Box>
   );
 };
 

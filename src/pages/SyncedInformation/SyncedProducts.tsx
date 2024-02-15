@@ -1,14 +1,10 @@
-import React, { useEffect   } from 'react'; 
-import { navigateHeader } from '@tiendanube/nexo';
-import { Layout, Page } from '@nimbus-ds/patterns'; 
-import { nexo } from '@/app';   
+import {FC}  from 'react';  
+import { Layout, Page } from '@nimbus-ds/patterns';  
 import ProductListDropi from './ProductListDropi';
+import React from 'react';
 
-const SyncedProducts: React.FC = () => {
-   
-  useEffect(() => {
-    navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
-  }, []);
+const SyncedProducts: FC = () => {
+    
 
   return (
     <Page
@@ -19,17 +15,13 @@ const SyncedProducts: React.FC = () => {
         lg: 'calc(100vh - 66px)',
       }}
     >
-      <Page.Header title='Administrar productos  sincronizados' />
+      <Page.Header title='Administrar productos sincronizados' />
       <Page.Body px={{ xs: 'none', md: '6' }}>
         <Layout columns="1">
         <Layout.Section>
             <>
             <ProductListDropi/> 
-              {({}) => {
-                return <>
-
-                </>;
-              }}
+            
             </>
           </Layout.Section>
         </Layout>
