@@ -1,47 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@nimbus-ds/components';
 import { useFetch } from '@/hooks';
-import { IProduct, IProductsDataProvider } from './TokensSync.types';
+import { IToken, ITokensDataProvider } from './TokensSync.types';
 
-const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
+const TokensDataProvider: React.FC<ITokensDataProvider> = ({
   children,
 }) => {
   const { addToast } = useToast();
   const { request } = useFetch();
-  const [products, setProduts] = useState<IProduct[]>([]);
+  const [tokens, setTokens] = useState<IToken[]>([]);
 
-  useEffect(() => onGetProducts(), []);
+  useEffect(() => onGetTokens(), []);
 
-  const onGetProducts = () => {
-    request<IProduct[]>({
-      url: `/products`,
+  const onGetTokens = () => {
+    request<IToken[]>({
+      url: `/token`,
       method: 'GET',
     })
       .then((response) => {
-        setProduts(response.content);
+        console.log("response.c" , response.content)
+        setTokens(response.content);
       })
       .catch((error) => {
         addToast({
           type: 'danger',
           text: error.message.description ?? error.message,
           duration: 4000,
-          id: 'error-products',
+          id: 'error-token',
         });
       });
   };
 
-  const onDeleteProduct = (productId: number) => {
-    request<IProduct[]>({
-      url: `/products/${productId}`,
+  const onDeleteToken = (tokenId: number) => {
+    request<IToken[]>({
+      url: `/products/${tokenId}`,
       method: 'DELETE',
     })
       .then(() => {
-        onGetProducts();
+        onGetTokens();
         addToast({
           type: 'success',
-          text: 'Produto deletado com sucesso',
+          text: 'Token eliminado efectivamente',
           duration: 4000,
-          id: 'delete-product',
+          id: 'delete-token',
         });
       })
       .catch((error) => {
@@ -49,12 +50,12 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
           type: 'danger',
           text: error.message.description ?? error.message,
           duration: 4000,
-          id: 'error-delete-product',
+          id: 'error-delete-token',
         });
       });
   };
 
-  return children({ products, onDeleteProduct });
+  return children({ tokens, onDeleteToken });
 };
 
-export default ProductsDataProvider;
+export default TokensDataProvider;

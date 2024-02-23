@@ -1,66 +1,49 @@
-import React from "react";
-import { Box, IconButton, Table, Text, Thumbnail } from "@nimbus-ds/components";
-import { TrashIcon } from "@nimbus-ds/icons";
-
-import { Translator } from "@/app/I18n";
-import { IProduct } from "../../TokensSync.types";
+import React, { useState } from 'react';
+import { Box, IconButton, Text } from '@nimbus-ds/components';
+import { TrashIcon } from '@nimbus-ds/icons';
+import { IToken } from '../../TokensSync.types';
+import { DataList } from '@nimbus-ds/patterns';
 
 const ListDesktop: React.FC<{
-  products: IProduct[];
-  onDeleteProduct: (productId: number) => void;
-}> = ({ products, onDeleteProduct }) => (
-  <Table>
-    <Table.Head>
-      <Table.Row>
-        <Table.Cell>
-          <Translator path="products.name" />
-        </Table.Cell>
-        <Table.Cell>
-          <Box
-            display="flex"
-            gap="2"
-            alignItems="center"
-            width="100%"
-            justifyContent="center"
-          >
-            <Text>
-              <Translator path="products.remove" />
-            </Text>
-          </Box>
-        </Table.Cell>
-      </Table.Row>
-    </Table.Head>
-    <Table.Body>
-      {products.map((product) => (
-        <Table.Row key={product.id}>
-          <Table.Cell>
-            <Box display="flex" gap="2" alignItems="center">
-              <Thumbnail
-                src={product.images?.[0]?.src}
-                width="36px"
-                alt={`${product.name.pt || product.name.es}`}
-              />
-              {product.name.pt || product.name.es}
+  tokens: IToken[];
+  onDeleteToken: (tokenId: number) => void;
+}> = ({ tokens, onDeleteToken }) => {
+  const [hideToken, sethideToken] = useState(true);
+
+  return (
+    <>
+  <Text fontSize={'caption'}  color="success-textLow"  onClick={() => sethideToken(!hideToken)}> {hideToken == true ? 'Ver tokens' : 'Ocultar'} </Text>
+
+      <DataList>
+        {tokens.map((token) => (
+          <DataList.Row gap="1">
+            <Box display="flex" justifyContent="space-between">
+              <Text>Fecha de integración: {token.createdAt.split('T')[0]}</Text>
             </Box>
-          </Table.Cell>
-          <Table.Cell>
-            <Box
-              display="flex"
-              gap="2"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <IconButton
-                onClick={() => onDeleteProduct(product.id)}
-                source={<TrashIcon />}
-                size="2rem"
-              />
+            <Box display="flex" justifyContent="space-between">
+              <Text>{token.name}</Text>
             </Box>
-          </Table.Cell>
-        </Table.Row>
-      ))}
-    </Table.Body>
-  </Table>
-);
+            <Box display="flex" justifyContent="space-between">
+              <Text fontSize={'highlight'}
+                as="span"
+                wordBreak="break-all"
+              >
+                {hideToken ? '...' : token.token}
+              </Text>
+              <div className="itsyou">
+                {' '}
+                <IconButton
+                  onClick={() => onDeleteToken(token.id)}
+                  source={<TrashIcon />}
+                  size="2rem"
+                />
+              </div>
+            </Box>
+          </DataList.Row>
+        ))}
+      </DataList>
+    </>
+  );
+};
 
 export default ListDesktop;

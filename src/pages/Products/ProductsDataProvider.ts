@@ -18,6 +18,7 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       method: 'GET',
     })
       .then((response) => {
+        console.log("response.content", response.content)
         setProduts(response.content);
       })
       .catch((error) => {
