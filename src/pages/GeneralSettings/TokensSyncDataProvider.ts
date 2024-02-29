@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@nimbus-ds/components';
 import { useFetch } from '@/hooks';
-import { IToken, ITokensDataProvider, IDataToken } from './TokensSync.types';
+import { IDataSetting, ISettingDataProvider, ISetting  } from './Settings.types';
 
 
-const TokensDataProvider: React.FC<ITokensDataProvider> = ({
+const TokensDataProvider: React.FC<ISettingDataProvider> = ({
   children,
 }) => {
   const { addToast } = useToast();
   const { request } = useFetch();
-  const [tokens, setTokens] = useState<IToken[]>([]);
+  const [settings, setSettings] = useState<ISetting[]>([]);
 
   useEffect(() => onGetTokens(), []);
 
   const onGetTokens = () => {
-    request<IToken[]>({
-      url: `/token`,
+    request<ISetting[]>({
+      url: `/settings`,
       method: 'GET',
     })
       .then((response) => {
-        setTokens(response.content);
+        setSettings(response.content);
       })
       .catch((error) => {
         addToast({
@@ -31,34 +31,9 @@ const TokensDataProvider: React.FC<ITokensDataProvider> = ({
       });
   };
 
-  const onDeleteToken = (tokenId: number) => {
 
-    request<IToken[]>({
-      url: `/token/${tokenId}`,
-      method: 'DELETE',
-    })
-      .then(() => {
-        onGetTokens();
-        addToast({
-          type: 'success',
-          text: 'Token eliminado efectivamente',
-          duration: 4000,
-          id: 'delete-token',
-        });
-      })
-      .catch((error) => {
-        addToast({
-          type: 'danger',
-          text: error.message.description ?? error.message,
-          duration: 4000,
-          id: 'error-delete-token',
-        });
-      });
-  };
-
-
-  const onCreateToken = (data: IDataToken): Promise<boolean> =>  {
-    return request<{ dataToken: IDataToken }>({
+  const onCreateSettings = (data: IDataSetting): Promise<boolean> =>  {
+    return request<{ dataToken: IDataSetting }>({
       url: `/createtoken`,
       method: 'POST',
       params: data
@@ -87,7 +62,32 @@ const TokensDataProvider: React.FC<ITokensDataProvider> = ({
 
   };
 
-  return children({ tokens, onDeleteToken, onCreateToken });
+
+  // const onDeleteToken = (tokenId: number) => {
+
+  //   request<IToken[]>({
+  //     url: `/token/${tokenId}`,
+  //     method: 'DELETE',
+  //   })
+  //     .then(() => {
+  //       onGetTokens();
+  //       addToast({
+  //         type: 'success',
+  //         text: 'Token eliminado efectivamente',
+  //         duration: 4000,
+  //         id: 'delete-token',
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       addToast({
+  //         type: 'danger',
+  //         text: error.message.description ?? error.message,
+  //         duration: 4000,
+  //         id: 'error-delete-token',
+  //       });
+  //     });
+  // };
+  return children({ settings,  onCreateSettings });
 };
 
 export default TokensDataProvider;

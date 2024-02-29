@@ -4,10 +4,8 @@ import { TrashIcon } from '@nimbus-ds/icons';
 import { IToken } from '../../TokensSync.types';
 import { DataList } from '@nimbus-ds/patterns';
 
-const ListDesktop: React.FC<{
-  tokens: IToken[];
-  onDeleteToken: (tokenId: number) => void;
-}> = ({ tokens, onDeleteToken }) => {
+const ListDesktop: React.FC<{ tokens: IToken[]; onDeleteToken: (tokenId: number) => void; }> = ({ tokens, onDeleteToken }) => {
+
   const [hideToken, sethideToken] = useState(true);
 
   return (
@@ -21,10 +19,10 @@ const ListDesktop: React.FC<{
               <Text>Fecha de integración: {token.createdAt.split('T')[0]}</Text>
             </Box>
             <Box display="flex" justifyContent="space-between">
-              <Text>{token.name}</Text>
+              <Text>{token.shop_name}</Text>
             </Box>
             <Box display="flex" justifyContent="space-between">
-              <Text fontSize={'highlight'}
+              <Text fontSize={'caption'}
                 as="span"
                 wordBreak="break-all"
               >
@@ -33,7 +31,7 @@ const ListDesktop: React.FC<{
               <div className="itsyou">
                 {' '}
                 <IconButton
-                  onClick={() => onDeleteToken(token.id)}
+                  onClick={() => onDeleteToken(token._id)}
                   source={<TrashIcon />}
                   size="2rem"
                 />

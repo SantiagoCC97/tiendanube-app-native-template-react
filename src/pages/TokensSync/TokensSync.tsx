@@ -1,12 +1,10 @@
-import React, { useEffect   } from 'react'; 
+import React, { useEffect } from 'react';
 import { navigateHeader } from '@tiendanube/nexo';
-import { Layout, Page } from '@nimbus-ds/patterns'; 
-import { nexo } from '@/app';  
-import DataTableTokens from './DataTableTokens';
-import ModalAddToken from './ModalAddToken';
+import { Layout, Page } from '@nimbus-ds/patterns';
+import { nexo } from '@/app';
+import DataTableTokens from './DataTableTokens'; 
 
 const TokensSync: React.FC = () => {
-   
   useEffect(() => {
     navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
   }, []);
@@ -20,17 +18,14 @@ const TokensSync: React.FC = () => {
         lg: 'calc(100vh - 66px)',
       }}
     >
-      <Page.Header title='Configuración de tokens' />
+      <Page.Header title="Configuración de tokens" />
       <Page.Body px={{ xs: 'none', md: '6' }}>
         <Layout columns="1">
           <Layout.Section>
-            <>
-            <ModalAddToken/>
-            <DataTableTokens/> 
+            <> 
+              <DataTableTokens />
               {({}) => {
-                return <>
-
-                </>;
+                return <></>;
               }}
             </>
           </Layout.Section>

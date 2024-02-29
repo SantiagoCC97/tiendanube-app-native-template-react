@@ -31,7 +31,7 @@ const ListMobile: React.FC<{
                 alignItems="center"
                 justifyContent="center"
               >
-                <Text fontSize={'highlight'}>{token.name}</Text>
+                <Text fontSize={'highlight'}>{token.shop_name}</Text>
               </Box>
 
               <Box>

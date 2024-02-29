@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { navigateHeader } from '@tiendanube/nexo';
 import { nexo } from '@/app';
-import { Box, Pagination, Text } from '@nimbus-ds/components'; 
+import { Box, Pagination, Text } from '@nimbus-ds/components';
 import TokensDataProvider from './TokensSyncDataProvider';
 import { PAGE_SIZE } from './TokensSync.definitions';
 import { Responsive } from '@/components';
 import { ListDesktop, ListMobile } from './components';
+import ModalAddToken from './ModalAddToken';
 
 const DataTableTokens: React.FC = () => {
   useEffect(() => {
@@ -16,14 +17,12 @@ const DataTableTokens: React.FC = () => {
   const handlePageChange = (page: number): void => {
     setCurrentPage(page);
   };
- 
- 
 
-  return ( 
+  return (
     <>
       <TokensDataProvider>
-        {({ tokens, onDeleteToken }) => {
-          const total = tokens.length; 
+        {({ tokens, onDeleteToken, onCreateToken }) => {
+          const total = tokens.length;
           const tokensPaginated = tokens.slice(
             currentPage === 1 ? 0 : (currentPage - 1) * PAGE_SIZE,
             (currentPage - 1) * PAGE_SIZE + PAGE_SIZE,
@@ -32,10 +31,15 @@ const DataTableTokens: React.FC = () => {
           return (
             <Responsive
               mobileContent={
-                <ListMobile tokens={tokens} onDeleteToken={onDeleteToken} />
+                <>
+                  <ModalAddToken onCreateToken={onCreateToken} />
+                  <ListMobile tokens={tokens} onDeleteToken={onDeleteToken} />
+                </>
               }
               desktopContent={
                 <>
+                  <ModalAddToken onCreateToken={onCreateToken} />
+
                   <ListDesktop
                     tokens={tokensPaginated}
                     onDeleteToken={onDeleteToken}
@@ -66,4 +70,4 @@ const DataTableTokens: React.FC = () => {
   );
 };
 
-export default DataTableTokens; 
+export default DataTableTokens;

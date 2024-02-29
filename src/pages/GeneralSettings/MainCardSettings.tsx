@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { navigateHeader } from '@tiendanube/nexo';
 import { nexo } from '@/app';
 import { Box, Button, Card, Tag, Text, Title } from '@nimbus-ds/components';
@@ -7,6 +7,13 @@ const MainCardSettings: React.FC = () => {
   useEffect(() => {
     navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
   }, []);
+
+  
+
+
+  const [syncOrderState, setsyncOrderState] = useState<boolean>();
+
+
 
   return (
     <>
