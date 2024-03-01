@@ -4,21 +4,23 @@ import { useFetch } from '@/hooks';
 import { IDataSetting, ISettingDataProvider, ISetting  } from './Settings.types';
 
 
-const TokensDataProvider: React.FC<ISettingDataProvider> = ({
+const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
   children,
 }) => {
   const { addToast } = useToast();
   const { request } = useFetch();
   const [settings, setSettings] = useState<ISetting[]>([]);
 
-  useEffect(() => onGetTokens(), []);
+  useEffect(() => onGetSettings(), []);
 
-  const onGetTokens = () => {
+  const onGetSettings = () => {
     request<ISetting[]>({
       url: `/settings`,
       method: 'GET',
     })
       .then((response) => {
+
+          console.log(response.content);
         setSettings(response.content);
       })
       .catch((error) => {
@@ -26,7 +28,7 @@ const TokensDataProvider: React.FC<ISettingDataProvider> = ({
           type: 'danger',
           text: error.message.description ?? error.message,
           duration: 4000,
-          id: 'error-token',
+          id: 'error-settings',
         });
       });
   };
@@ -34,17 +36,17 @@ const TokensDataProvider: React.FC<ISettingDataProvider> = ({
 
   const onCreateSettings = (data: IDataSetting): Promise<boolean> =>  {
     return request<{ dataToken: IDataSetting }>({
-      url: `/createtoken`,
+      url: `/createsetting`,
       method: 'POST',
       params: data
     })
       .then(() => {
-        onGetTokens();
+        onGetSettings();
         addToast({
           type: 'success',
-          text: 'Token creado efectivamente',
+          text: 'Configuraciones guardadas efectivamente',
           duration: 4000,
-          id: 'created-token',
+          id: 'created-settings',
         });
 
         return true;
@@ -90,4 +92,4 @@ const TokensDataProvider: React.FC<ISettingDataProvider> = ({
   return children({ settings,  onCreateSettings });
 };
 
-export default TokensDataProvider;
+export default SettingsDataProvider;
