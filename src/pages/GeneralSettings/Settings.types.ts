@@ -10,6 +10,8 @@ export interface ISetting {
 
 export interface IDataSetting {
   autosync_orders: string; 
+  ifProdExist: string;
+  cleanNoteOrder: string;
 }
 
 

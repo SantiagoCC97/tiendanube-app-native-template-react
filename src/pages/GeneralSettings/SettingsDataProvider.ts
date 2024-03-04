@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@nimbus-ds/components';
 import { useFetch } from '@/hooks';
-import { IDataSetting, ISettingDataProvider, ISetting  } from './Settings.types';
+import { IDataSetting, ISettingDataProvider, ISetting } from './Settings.types';
 
 
 const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
@@ -20,7 +20,7 @@ const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
     })
       .then((response) => {
 
-          console.log(response.content);
+        console.log(response.content);
         setSettings(response.content);
       })
       .catch((error) => {
@@ -34,7 +34,7 @@ const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
   };
 
 
-  const onCreateSettings = (data: IDataSetting): Promise<boolean> =>  {
+  const onCreateSettings = (data: IDataSetting): Promise<boolean> => {
     return request<{ dataToken: IDataSetting }>({
       url: `/createsetting`,
       method: 'POST',
@@ -51,8 +51,8 @@ const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
 
         return true;
       })
-      .catch(( error)  => {  
-        // console.log(error.description ?? error.message)
+      .catch((error) => {
+        console.log("error", error);
         addToast({
           type: 'danger',
           text: "Es probable que este token ya haya sido utilizado.",
@@ -89,7 +89,7 @@ const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
   //       });
   //     });
   // };
-  return children({ settings,  onCreateSettings });
+  return children({ settings, onCreateSettings });
 };
 
 export default SettingsDataProvider;

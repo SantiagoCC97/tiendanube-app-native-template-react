@@ -1,39 +1,59 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useReducer, useState } from 'react';
 import { navigateHeader } from '@tiendanube/nexo';
 import { nexo } from '@/app';
 import { Box, Button, Card, Tag, Text, Title } from '@nimbus-ds/components';
-import SettingsDataProvider from './SettingsDataProvider'; 
- 
+import SettingsDataProvider from './SettingsDataProvider';
+import { IDataSetting } from './Settings.types';
+
 const MainCardSettings: React.FC = () => {
   useEffect(() => {
     navigateHeader(nexo, { goTo: '/', text: 'Volver al inicio' });
   }, []);
 
-
-  const [autoSync, setautoSync] = useState<boolean>();
-  const [ifExistProd, setifExistProd] = useState<boolean>();
-  const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
-
-
-
-
-  useEffect(() => {
-
-    
-  }, []);
-
   return (
     <SettingsDataProvider>
+
       {({ settings, onCreateSettings }) => {
-        settings.map((setting) => {
-          setting.autosync_orders == 'y' ? setautoSync(true)  : setautoSync(false);
-          setting.ifProdExist == 'y' ? setifExistProd(true) : setifExistProd( false);
-          setting.cleanNoteOrder == 'y' ? setnoteOrder(true) : setnoteOrder(false);
+       
+console.log("Settings", settings);
+var autosync_orders
+
+        if(settings[0].autosync_orders == 'y'){
+          autosync_orders = true
+        }
 
 
 
-          (setting.autosync_orders);
-        });
+const [autoSync, setautoSync] = useState<boolean>();
+const [ifExistProd, setifExistProd] = useState<boolean>();
+const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
+//settings[0].autosync_orders === 'y' ? true : false
+//settings[0].ifProdExist === 'y' ? true : false
+//settings[0].cleanNoteOrder === 'y' ? true : false
+        useEffect(() => {
+    
+          function sendData() {
+            const updatedDataSettings = {
+              autosync_orders: autoSync ? 'y' : 'n',
+              ifProdExist: ifExistProd ? 'y' : 'n',
+              cleanNoteOrder: cleanNoteOrder ? 'y' : 'n',
+            };
+            onCreateSettings(updatedDataSettings);
+          }
+          sendData();
+        }, [autoSync, ifExistProd, cleanNoteOrder]);
+
+ 
+
+        function handleChange(type: string, value: boolean) {
+          if (type == 'sync') {
+            setautoSync(value);
+          } else if (type == 'create') {
+            setifExistProd(value);
+          } else {
+            setnoteOrder(value);
+          }
+        }
 
         return (
           <>
@@ -60,11 +80,9 @@ const MainCardSettings: React.FC = () => {
                 </Card.Body>
                 <Card.Footer padding="base">
                   <Button
-                    onClick={() =>  {
-                      
-                    }                  
-                  }
-                    
+                    onClick={() => {
+                      handleChange('sync', !autoSync);
+                    }}
                     appearance={autoSync ? 'primary' : 'danger'}
                   >
                     {autoSync ? 'Activado' : 'Inactivo'}
@@ -96,12 +114,10 @@ const MainCardSettings: React.FC = () => {
                   </Text>
                 </Card.Body>
                 <Card.Footer padding="base">
-                    <Button
-                    onClick={() =>  {
-                      
-                    }                  
-                  }
-                    
+                  <Button
+                    onClick={() => {
+                      handleChange('create', !ifExistProd);
+                    }}
                     appearance={ifExistProd ? 'primary' : 'danger'}
                   >
                     {ifExistProd ? 'Activado' : 'Inactivo'}
@@ -134,12 +150,10 @@ const MainCardSettings: React.FC = () => {
                   </Text>
                 </Card.Body>
                 <Card.Footer padding="base">
-                <Button
-                    onClick={() =>  {
-                      
-                    }                  
-                  }
-                    
+                  <Button
+                    onClick={() => {
+                      handleChange('clean', !cleanNoteOrder);
+                    }}
                     appearance={cleanNoteOrder ? 'primary' : 'danger'}
                   >
                     {cleanNoteOrder ? 'Activado' : 'Inactivo'}
