@@ -3,7 +3,7 @@ import { navigateHeader } from '@tiendanube/nexo';
 import { nexo } from '@/app';
 import { Box, Button, Card, Tag, Text, Title } from '@nimbus-ds/components';
 import SettingsDataProvider from './SettingsDataProvider';
-import { IDataSetting } from './Settings.types';
+import { IDataSetting, ISetting } from './Settings.types';
 
 const MainCardSettings: React.FC = () => {
   useEffect(() => {
@@ -12,26 +12,20 @@ const MainCardSettings: React.FC = () => {
 
   return (
     <SettingsDataProvider>
-
       {({ settings, onCreateSettings }) => {
-       
-console.log("Settings", settings);
-var autosync_orders
+        const [autoSync, setautoSync] = useState<boolean>(false);
+        const [ifExistProd, setifExistProd] = useState<boolean>(false);
+        const [cleanNoteOrder, setnoteOrder] = useState<boolean>(false);
+        const [updater, setUpdater] = useState<number>(0);
 
-        if(settings[0].autosync_orders == 'y'){
-          autosync_orders = true
-        }
-
-
-
-const [autoSync, setautoSync] = useState<boolean>();
-const [ifExistProd, setifExistProd] = useState<boolean>();
-const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
-//settings[0].autosync_orders === 'y' ? true : false
-//settings[0].ifProdExist === 'y' ? true : false
-//settings[0].cleanNoteOrder === 'y' ? true : false
+        useEffect(() => {  
+          if (settings.length > 0 && settings[0]) {
+            setautoSync(settings[0].autosync_orders === 'y' ? true : false);
+            setifExistProd(settings[0].ifProdExist === 'y' ? true : false);
+            setnoteOrder(settings[0].cleanNoteOrder === 'y' ? true : false);
+          }
+        }, [settings]);
         useEffect(() => {
-    
           function sendData() {
             const updatedDataSettings = {
               autosync_orders: autoSync ? 'y' : 'n',
@@ -40,10 +34,9 @@ const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
             };
             onCreateSettings(updatedDataSettings);
           }
-          sendData();
-        }, [autoSync, ifExistProd, cleanNoteOrder]);
+          if (updater != 0) sendData();
+        }, [updater]);
 
- 
 
         function handleChange(type: string, value: boolean) {
           if (type == 'sync') {
@@ -81,6 +74,8 @@ const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
                 <Card.Footer padding="base">
                   <Button
                     onClick={() => {
+                      setUpdater(updater + 1);
+
                       handleChange('sync', !autoSync);
                     }}
                     appearance={autoSync ? 'primary' : 'danger'}
@@ -116,6 +111,8 @@ const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
                 <Card.Footer padding="base">
                   <Button
                     onClick={() => {
+                      setUpdater(updater + 1);
+
                       handleChange('create', !ifExistProd);
                     }}
                     appearance={ifExistProd ? 'primary' : 'danger'}
@@ -152,6 +149,7 @@ const [cleanNoteOrder, setnoteOrder] = useState<boolean>();
                 <Card.Footer padding="base">
                   <Button
                     onClick={() => {
+                      setUpdater(updater + 1);
                       handleChange('clean', !cleanNoteOrder);
                     }}
                     appearance={cleanNoteOrder ? 'primary' : 'danger'}

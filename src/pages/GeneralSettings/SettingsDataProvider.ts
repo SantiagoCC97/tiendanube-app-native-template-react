@@ -19,8 +19,6 @@ const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
       method: 'GET',
     })
       .then((response) => {
-
-        console.log(response.content);
         setSettings(response.content);
       })
       .catch((error) => {
