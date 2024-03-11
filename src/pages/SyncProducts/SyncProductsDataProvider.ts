@@ -1,24 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@nimbus-ds/components';
 import { useFetch } from '@/hooks';
-import { IProduct, IProductsDataProvider } from './SyncProducts.types';
+import { ICatObj, IProduct, IProductsDataProvider, IShop, InitialState } from './SyncProducts.types';
+import {IprodFetched} from './SyncProductsFetched.types.ts';
+
+import { useSelector } from 'react-redux';
 
 const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
   children,
 }) => {
   const { addToast } = useToast();
   const { request } = useFetch();
-  const [products, setProduts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState< IprodFetched[]>([]);
+  const [shops, setShops] = useState<IShop[]>([]);
+  const [categories, setCategories] = useState<ICatObj[]>([]);
+  const tokenforCategories = useSelector((state: InitialState) => state); 
 
-  useEffect(() => onGetProducts(), []);
+  useEffect(() => {
+    onGetShops(); 
+    if (tokenforCategories.token != '') {
+      getCategoriesDropi();
+      onGetProducts()
+    }
 
-  const onGetProducts = () => {
-    request<IProduct[]>({
-      url: `/products`,
+  }, [tokenforCategories]);
+
+  //obtiene los tokens de las tiendas integradas
+  const onGetShops = () => {
+    request<IShop[]>({
+      url: `/tokenandshop`,
       method: 'GET',
     })
       .then((response) => {
-        setProduts(response.content);
+        setShops(response.content);
       })
       .catch((error) => {
         addToast({
@@ -28,6 +42,111 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
           id: 'error-products',
         });
       });
+  };
+
+  // obtiene las categorias de los productos a traves del token de la tienda 
+  const getCategoriesDropi = async () => {
+
+    const data = tokenforCategories;
+
+    const endpoint = 'https://api.dropi.co/integrations/categories';
+    const requestHeaders = {
+      'dropi-integration-key': data.token,
+      'Content-Type': 'application/json;charset=UTF-8'
+    };
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: requestHeaders
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json(); 
+      if (data.isSuccess) {
+        setCategories(data.objects);
+      } else {
+        setCategories([]);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+
+
+  const onGetProducts = async () => {
+    const productsFetched : IprodFetched[] = [] ;
+    const data = tokenforCategories;
+
+
+    if (data.token == "") return ('No token Found')
+
+    const endpoint = 'https://api.dropi.co/integrations/products/index';
+    const requestHeaders = {
+      'dropi-integration-key': data.token,
+      'Content-Type': 'application/json;charset=UTF-8'
+    };
+    let startData = 0;
+    //  startData = ((currentPage - 1) * pageSize);
+
+    const gata = JSON.stringify({
+      'startData': startData, //------------------------------------------------
+      'pageSize': 10,//pageSize,
+      'order_type': "desc", //order_type,
+      'order_by': "id",//order_by,
+      'keywords': '',// keywords-------------------------------------------------,
+      'active': true,
+      'userVerified': false,// userVerified,
+      'stockmayor': 0,// withStock,
+      'category': '',//search_by_category,  //-------------------------------------
+      'supplier_id': '',// search_by_warehouse
+      'no_count': true,
+    });  // data 
+
+    try {
+
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: requestHeaders,
+        body: gata
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const data = await response.json();
+     
+      if (data.isSuccess) {
+
+        data.objects.forEach((prod: any)  => {
+          
+          if (prod.type === 'VARIABLE') {
+            let stock = 0;
+
+            prod.variations.forEach(
+              (variation: any)   => {
+                stock = stock + parseFloat(variation.stock);
+              });
+            prod.stock = stock;
+          } 
+          productsFetched.push(prod);
+        });
+
+        setProducts(productsFetched) 
+        //setCategories(data.objects);
+      } else {
+        //setCategories([]);
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const onDeleteProduct = (productId: number) => {
@@ -54,7 +173,7 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       });
   };
 
-  return children({ products, onDeleteProduct });
+  return children({ products, shops, categories, onDeleteProduct, getCategoriesDropi });
 };
 
 export default ProductsDataProvider;

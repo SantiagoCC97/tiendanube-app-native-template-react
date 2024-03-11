@@ -74,8 +74,7 @@ const TokensDataProvider: React.FC<ITokensDataProvider> = ({
 
         return true;
       })
-      .catch(( error)  => {  
-        // console.log(error.description ?? error.message)
+      .catch(( error)  => {   
         addToast({
           type: 'danger',
           text: "Es probable que este token ya haya sido utilizado.",

@@ -92,8 +92,7 @@ const ModalAddToken: React.FC<{
               }
               onClick={async () => {
                 const a = await onCreateToken(data);
-                setModalOpen(!a);
-                console.log('a', a);
+                setModalOpen(!a); 
               }}
             >
               Aceptar

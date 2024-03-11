@@ -17,8 +17,7 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       url: `/products`,
       method: 'GET',
     })
-      .then((response) => {
-        console.log("response.content", response.content)
+      .then((response) => { 
         setProduts(response.content);
       })
       .catch((error) => {

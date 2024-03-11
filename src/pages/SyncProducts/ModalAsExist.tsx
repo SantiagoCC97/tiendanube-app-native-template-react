@@ -51,8 +51,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = event.target;
-    console.log(event.target.value);
+    const { name, value } = event.target; 
     setData({
       ...data,
       [name]: value,

@@ -1,9 +1,32 @@
+import { IprodFetched } from "./SyncProductsFetched.types";
+
 interface IInventoryLevel {
   id: number;
   variant_id: number;
   location_id: string;
   stock: number;
 }
+
+export interface InitialState {
+  token: string;
+  country: string;  
+}
+
+
+export interface Categories {
+  isSuccess: boolean;
+  count:     number;
+  status:    number;
+  obj:   ICatObj[];
+}
+ 
+
+export interface ICatObj {
+  
+    id:              number;
+    name:            string;
+    parent_category: number;
+  }; 
 
 interface IVariant {
   id: number;
@@ -48,11 +71,26 @@ export interface IProduct {
   };
   variants?: IVariant[];
   images: IImage[];
-}  
+}
+
+
+export interface IShop {
+  _doc: {
+    country: string;
+    token: string;
+    shop_name: string;
+  }
+  country: string;
+}
+
+
 
 export interface IProductsDataProvider {
   children: (data: {
-    products: IProduct[];
+    products: IprodFetched[];
+    shops: IShop[];
+    categories: ICatObj[];
     onDeleteProduct: (productId: number) => void;
+    getCategoriesDropi: () => void;
   }) => React.ReactNode;
 }

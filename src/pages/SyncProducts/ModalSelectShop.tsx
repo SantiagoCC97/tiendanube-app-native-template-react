@@ -1,85 +1,95 @@
 import { Fragment, FC, useState } from 'react';
-import { Button, Card, Modal, Text } from '@nimbus-ds/components'; 
+import { Button, Card, Modal, Text } from '@nimbus-ds/components';
+import ProductsDataProvider from './SyncProductsDataProvider';
+import { useSelector, useDispatch } from 'react-redux';
 
 interface MiComponenteProps {
   toogle: boolean;
   setToogle: (flag: boolean) => void;
 }
 
-interface Tienda {
-  id: number;
-  nombre: string;
-}
-
-const tiendaDePrueba: Tienda = { id: 1, nombre: 'Tienda de prueba' };
-const otraTienda: Tienda = { id: 2, nombre: 'Otra tienda' };
-
-const Tiendas = {
-  tienda1: tiendaDePrueba,
-  tienda2: otraTienda,
-};
-
 const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
-
-  const [tiendaSeleccionada, setTiendaSeleccionada] = useState<number | null>(
+  const [tiendaSeleccionada, setTiendaSeleccionada] = useState<string | null>(
     null,
   );
 
-  const selectedShop = (id: number) => {
-    setTiendaSeleccionada(id);
-  };
+  const dispatch = useDispatch();
 
-  
-  return (
+  return ( 
     <>
-      <Modal
-        onDismiss={function noRefCheck() {
-          setToogle(false);
-        }}
-        open={toogle}
-      >
-        <Fragment key=".0">
-          <Modal.Header title="Selecciona tienda" />
-          <Modal.Body padding="none">
-            {Object.values(Tiendas).map((tienda) => (
-              <div className="div-pad">
-                <Card
-                  key={tienda.id}
-                  onClick={() => selectedShop(tienda.id)}
-                  backgroundColor={
-                    tiendaSeleccionada === tienda.id
-                      ? 'primary-surface'
-                      : 'neutral-surface'
-                  }
-                >
-                  <div className="test">
-                    <img
-                      className="avatar"
-                      width="50px"
-                      height="50px"                     
-                      src="https://previews.123rf.com/images/aprillrain/aprillrain2212/aprillrain221200638/196354278-imagen-de-caricatura-de-un-astronauta-sentado-en-una-luna-ilustraci%C3%B3n-de-alta-calidad.jpg"
-                    />
-                    <Text  fontSize="highlight" lineHeight="base">
-                      {tienda.nombre}
-                    </Text>
-                  </div>
-                </Card>
-              </div>
-            ))}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              appearance="neutral"
-              onClick={function noRefCheck() {
+      <ProductsDataProvider>
+        {({ shops }) => {
+
+          const selectedShop = (token: string, country: string) => {
+            setTiendaSeleccionada(token); 
+            dispatch({type: "TOKEN",  payload:  {token: token, country: country}  })
+          };
+
+          
+
+          return (
+            <Modal
+              onDismiss={function noRefCheck() {
                 setToogle(false);
               }}
+              open={toogle}
             >
-              Cancelar
-            </Button>
-            <Button appearance="primary">Aceptar</Button>
-          </Modal.Footer>
-        </Fragment>
-      </Modal>
+              <Fragment key=".0">
+                <Modal.Header title="Selecciona tienda" />
+                <Modal.Body>
+ 
+
+
+
+                  {shops.map((tienda) => (
+                    <div className="div-pad">
+                      <Card
+                        key={tienda._doc.token}
+                        onClick={() =>
+                          selectedShop(tienda._doc.token, tienda.country)
+                        }
+                        backgroundColor={
+                          tiendaSeleccionada === tienda._doc.token
+                            ? 'primary-surface'
+                            : 'neutral-surface'
+                        }
+                      >
+                        <div className="test">
+                          <img
+                            className="avatar"
+                            width="50px"
+                            height="50px"
+                            src=" assets/images/logodropi.png"
+                          />
+                          <Text fontSize="highlight" lineHeight="base">
+                            {tienda._doc.shop_name}
+                          </Text>
+                        </div>
+                      </Card>
+                    </div>
+                  ))}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    appearance="neutral"
+                    onClick={function noRefCheck() {
+                      setToogle(false);
+                    }}
+                  >
+                    Cerrar
+                  </Button>
+                  {/* <Button appearance="primary"  onClick={function noRefCheck() {
+                    //onShopSelect.... capturar CO  etc... necesario para llamar la lista de productos.
+
+
+                      setToogle(false);
+                    }}>Aceptar</Button> */}
+                </Modal.Footer>
+              </Fragment>
+            </Modal>
+          );
+        }}
+      </ProductsDataProvider>
     </>
   );
 };

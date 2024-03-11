@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@nimbus-ds/components';
 import { useFetch } from '@/hooks';
-import { IDataSetting, ISettingDataProvider, ISetting } from './Settings.types';
+import { IDataSetting, ISettingDataProvider, ISetting } from './Settings.types'; 
+
+
+
+
 
 
 const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
@@ -49,8 +53,7 @@ const SettingsDataProvider: React.FC<ISettingDataProvider> = ({
 
         return true;
       })
-      .catch((error) => {
-        console.log("error", error);
+      .catch((error) => { 
         addToast({
           type: 'danger',
           text: "Es probable que este token ya haya sido utilizado.",
