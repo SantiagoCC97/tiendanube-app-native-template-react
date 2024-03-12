@@ -3,7 +3,7 @@ interface IData{
     name?:string,
     color?:number,
     desc?:string,
-    price?:number,
+    price?:string,
     img?:string,
     variantesChecked: { [key: string]: boolean };
 

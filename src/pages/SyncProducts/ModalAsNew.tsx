@@ -1,4 +1,4 @@
-import { FC, Fragment, useState, ChangeEvent } from 'react';
+import { FC, Fragment, useState, ChangeEvent, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -8,10 +8,12 @@ import {
   Text,
 } from '@nimbus-ds/components';
 import { FormField } from '@nimbus-ds/patterns';
+import { IprodFetched } from './SyncProductsFetched.types';
 
 interface MiComponenteProps {
   toogle: boolean;
   setToogle: (flag: boolean) => void;
+  ProductSelected: IprodFetched;
 }
 
 interface Variante {
@@ -27,24 +29,31 @@ const Variantes = {
   var2,
 };
 
-const ModalAsNew: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
+const ModalAsNew: FC<MiComponenteProps> = ({
+  toogle,
+  setToogle,
+  ProductSelected,
+}) => {
   const [UseNameDropi, setUseNameDropi] = useState<boolean>(true);
   const [UseDescDropi, setUseDescDropi] = useState<boolean>(true);
   const [UsePrice, setUsePrice] = useState<boolean>(true);
   const [UseImgDropi, setUseImgDropi] = useState<boolean>(true);
   const [Step, setStep] = useState<number>(0);
+  const [ProductSelect, setProductSelect] =
+    useState<IprodFetched>(ProductSelected);
+
   const [data, setData] = useState<IData>({
     id: '',
-    desc: 'Esta es la descripción proveniente de dropi :)',
-    name: 'Datico quemadito',
-    price: 10000,
+    desc: ProductSelect.description,
+    name: ProductSelect.name,
+    price: ProductSelect.sale_price,
     variantesChecked: {},
   });
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = event.target; 
+    const { name, value } = event.target;
     setData({
       ...data,
       [name]: value,
@@ -62,6 +71,8 @@ const ModalAsNew: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
       },
     }));
   };
+
+  console.log('ProductSelected', ProductSelected);
 
   return (
     <>
@@ -91,7 +102,7 @@ const ModalAsNew: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
                           setUseNameDropi(!UseNameDropi);
                           setData({
                             ...data,
-                            name: 'Datico quemadito',
+                            name: '',
                           });
                         }}
                         name="name-dropi"
@@ -120,7 +131,7 @@ const ModalAsNew: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
                           setUseDescDropi(!UseDescDropi);
                           setData({
                             ...data,
-                            desc: 'Esta es la descripción proveniente de dropi :)',
+                            desc: '',
                           });
                         }}
                         name="desc-dropi"
@@ -161,22 +172,31 @@ const ModalAsNew: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
                     </Box>
                   </>
                 ) : Step == 1 ? ( // Variantes producto
-                  <Box display="flex" flexDirection="column" gap="4">
-                    <Text>Selecciona las variaciones que quieres importar</Text>
-                    {Object.values(Variantes).map((variante) => (
-                      <div className="div-pad">
-                        <Checkbox
-                          name={variante.nombre}
-                          checked={
-                            data.variantesChecked[variante.nombre] || false
-                          }
-                          key={variante.id}
-                          label={variante.nombre}
-                          onChange={handleVarChecked}
-                        />
-                      </div>
-                    ))}
-                  </Box>
+                  ProductSelected.variations.length > 0 ? (
+                    <Box display="flex" flexDirection="column" gap="4">
+                      <Text>
+                        Selecciona las variaciones que quieres importar
+                      </Text>
+                      {ProductSelected.variations.map((variante) => (
+                        <div className="div-pad">
+                          <Checkbox
+                            name={variante.id}
+                            checked={
+                              data.variantesChecked[variante.nombre] || false
+                            }
+                            key={variante.id}
+                            label={variante.attribute_values.map(
+                              (atributo: any) =>
+                                `${atributo.attribute_name} ${atributo.value} `,
+                            )}
+                            onChange={handleVarChecked}
+                          />
+                        </div>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Text>Este producto no tiene variaciones...</Text>
+                  )
                 ) : Step == 2 ? (
                   <Box display="flex" flexDirection="column" gap="4">
                     <Text>Determina el precio del producto</Text>

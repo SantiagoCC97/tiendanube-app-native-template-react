@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { navigateHeader } from '@tiendanube/nexo';
 import { nexo } from '@/app';
 import {
@@ -8,6 +8,7 @@ import {
   Icon,
   IconButton,
   Input,
+  Modal,
   Popover,
   Select,
   Table,
@@ -24,8 +25,9 @@ import ModalAsNew from './ModalAsNew';
 import ModalAsExist from './ModalAsExist';
 import ModalSelectShop from './ModalSelectShop';
 import ProductsDataProvider from './SyncProductsDataProvider';
-import { InitialState } from './SyncProducts.types';
-import { useSelector } from 'react-redux';
+import { IObjImgs } from './SyncProducts.types';
+import ModalImgs from './ModalImgs';
+import { IprodFetched } from './SyncProductsFetched.types';
 
 const ProductListDropi: React.FC = () => {
   useEffect(() => {
@@ -33,14 +35,26 @@ const ProductListDropi: React.FC = () => {
   }, []);
   const [ModalAsNe, setModalAsNew] = useState<boolean>(false);
   const [ModalOpen, setModalOpen] = useState<boolean>(false);
+  const [ProductSelected, setProductSelected] = useState<IprodFetched>()
   const [ModalAsExis, setModalAsExist] = useState<boolean>(false);
+  const [modalIsOpenImg, setModalIsOpenImg] = useState(false);
+  const [objImgs, setObjImgs] = useState<IObjImgs[]>([]);
+  const [productx, setProductx] = useState<IprodFetched[]>([]);
+  const [keywords, setkeywords] = useState('');
+  const [category, setCategory] = useState('');
+
+  const openModalImg = (gallery: IObjImgs[]) => {
+    setObjImgs(gallery);
+    setModalIsOpenImg(true);
+  };
+
   // const notes = useSelector<InitialState>((state) => state.count)
 
   return (
     //Esto debe ser un ciclo que recorra los productos dropi.
     <>
       {ModalAsNe ? (
-        <ModalAsNew toogle={ModalAsNe} setToogle={setModalAsNew} />
+        <ModalAsNew toogle={ModalAsNe} setToogle={setModalAsNew} ProductSelected={ProductSelected as IprodFetched} />
       ) : ModalAsExis ? (
         <ModalAsExist toogle={ModalAsExis} setToogle={setModalAsExist} />
       ) : (
@@ -51,7 +65,7 @@ const ProductListDropi: React.FC = () => {
         <Page.Header
           buttonStack={
             <>
-              <Popover
+              {/* <Popover
                 content={
                   <Box display="flex" flexDirection="column" width="100%">
                     <MenuButton label="Crear productos seleccionados" />
@@ -63,7 +77,7 @@ const ProductListDropi: React.FC = () => {
                   Acciones masivas
                   <Icon source={<MenuIcon />} />
                 </Button>
-              </Popover>
+              </Popover> */}
               <Button
                 appearance="primary"
                 onClick={function noRefCheck() {
@@ -83,20 +97,46 @@ const ProductListDropi: React.FC = () => {
             Este es un alert de ejemplo en el header de la página
           </Alert>
           <ProductsDataProvider>
-            {({ categories }) => {
+            {({ categories, onGetProducts, products }) => {
+              setProductx(products);
+
+              function onChangex(
+                event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+              ) {
+                setkeywords(event.target.value);
+              }
+
+              const onKeyPress = (e: any) => {
+                if (e.key === 'Enter') {
+                  onGetProducts(keywords, category);
+                }
+              };
+
+              const onSelectCat = (event: ChangeEvent<HTMLSelectElement>) => {
+                setCategory(event.target.value);
+                onGetProducts(keywords, event.target.value); 
+              };
+
               return (
                 <Box display="flex" flexDirection="column" gap="2">
                   <Box display="flex" gap="1">
-                    <Input.Search placeholder="Buscar" />
-                    <Select appearance="neutral" id="Id" name="Name">
-                      <Select.Option
-                        disabled
-                        label="Filtrar por"
-                        selected
-                        value="Option 1"
-                      />
+                    <Input.Search
+                      placeholder="Buscar"
+                      onChange={onChangex}
+                      onKeyDown={onKeyPress}
+                    />
+                    <Select
+                      appearance="neutral"
+                      id="Id"
+                      name="Name"
+                      onChange={onSelectCat}
+                    >
+                      <Select.Option label="Todas" selected value="" />
                       {categories.map((category) => (
-                        <Select.Option label={category.name} value="Option 6" />
+                        <Select.Option
+                          label={category.name}
+                          value={category.name}
+                        />
                       ))}
                     </Select>
                   </Box>
@@ -125,92 +165,105 @@ const ProductListDropi: React.FC = () => {
               }
               header={
                 <DataTable.Header
-                  checkbox={{ checked: false, name: 'check-all-rows' }}
+                  checkbox={{
+                    checked: false,
+                    name: 'check-all-rows',
+                    defaultChecked: true,
+                  }}
                 >
                   <Table.Cell width="auto">Producto</Table.Cell>
-                  <Table.Cell width="100px">Stock</Table.Cell>
-                  <Table.Cell width="100px">Precio</Table.Cell>
-                  <Table.Cell width="100px">Promocional</Table.Cell>
+                  <Table.Cell width="60px">Stock</Table.Cell>
+                  <Table.Cell width="120px">Precio</Table.Cell>
+                  <Table.Cell width="120px">Promocional</Table.Cell>
                   <Table.Cell width="120px">Bodega</Table.Cell>
                   <Table.Cell width="120px">Acciones Rapidas</Table.Cell>
                 </DataTable.Header>
               }
             >
-              <ProductsDataProvider>
-                {({ products }) => {
-                  return (
-                    <>
-                      {products.map((product) => (
-                        <DataTable.Row
-                          backgroundColor={{
-                            hover: 'neutral-surface',
-                            rest: 'neutral-background',
-                          }}
-                          checkbox={{ checked: false, name: 'check-19' }}
-                        >
-                          <Table.Cell>
-                            <Box display="flex" gap="2">
-                              <Thumbnail
-                                alt={product.name}
-                                aspectRatio="1/1"
-                                width="64px"
-                                src={`https://d39ru7awumhhs2.cloudfront.net/${product.gallery[0].urlS3}`}
-                              />
-                              <Box
-                                display="flex"
-                                flexDirection="column"
-                                gap="1"
+              <>
+                {productx.length > 0
+                  ? productx.map((product) => (
+                      <DataTable.Row
+                        backgroundColor={{
+                          hover: 'neutral-surface',
+                          rest: 'neutral-background',
+                        }}
+                        checkbox={{
+                          checked: false,
+                          name: 'check-19',
+                          defaultChecked: true,
+                        }}
+                      >
+                        <Table.Cell>
+                          <Box display="flex" gap="2">
+                            <div>
+                              <button
+                                onClick={() => openModalImg(product.gallery)}
                               >
-                                <Text color="primary-interactive"> 
-                                  {product.name.charAt(0).toUpperCase() +
-                                product.name.slice(1).toLowerCase()}
-                                </Text>
-                                <Tag appearance="warning">
-                                  {product.categories[0].name}
-                                </Tag>
-                                <Text>SKU: {product.sku}</Text>
-                              </Box>
+                                <Thumbnail
+                                  alt={product.name}
+                                  aspectRatio="1/1"
+                                  width="64px"
+                                  src={
+                                    product.gallery[0]
+                                      ? `https://d39ru7awumhhs2.cloudfront.net/${product.gallery[0].urlS3}`
+                                      : ''
+                                  }
+                                />
+                              </button>
+                            </div>
+
+                            <Box display="flex" flexDirection="column" gap="1">
+                              <Text color="primary-interactive">
+                                {product.name.charAt(0).toUpperCase() +
+                                  product.name.slice(1).toLowerCase()}
+                              </Text>
+                              <Tag appearance="warning">
+                                {product.categories[0].name}
+                              </Tag>
+                              <Text>SKU: {product.sku}</Text>
                             </Box>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Input
-                              placeholder="0"
-                              type="number"
-                              value={Math.trunc(parseInt(product.stock))}
-                              disabled={true}
-                            />
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Input
-                              appearance="danger"
-                              append="$"
-                              placeholder="0"
-                              type="number"
-                              value={Math.trunc(
-                                parseInt(product.suggested_price),
-                              )}
-                              disabled={true}
-                            />
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Input
-                              appearance="success"
-                              append="$"
-                              placeholder="0"
-                              type="number"
-                              value={Math.trunc(parseInt(product.sale_price))}
-                              disabled={true}
-                            />
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Text>
-                              {product.user.name.charAt(0).toUpperCase() +
-                                product.user.name.slice(1).toLowerCase()}
-                            </Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Box display="flex" gap="2">
-                              <Tooltip content="Vincular con producto existente">
+                          </Box>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Input
+                            placeholder="0"
+                            type="number"
+                            value={Math.trunc(parseInt(product.stock))}
+                            disabled={true}
+                          />
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Input
+                            appearance="danger"
+                            append="$"
+                            placeholder="0"
+                            type="number"
+                            value={Math.trunc(
+                              parseInt(product.suggested_price),
+                            )}
+                            disabled={true}
+                          />
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Input
+                            appearance="success"
+                            append="$"
+                            placeholder="0"
+                            type="number"
+                            value={Math.trunc(parseInt(product.sale_price))}
+                            disabled={true}
+                          />
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Text>
+                            {product.user.name.charAt(0).toUpperCase() +
+                              product.user.name.slice(1).toLowerCase()}
+                          </Text>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Box display="flex" gap="2">
+                            {/* <Tooltip content="Vincular con producto existente">
                                 <IconButton
                                   size="2rem"
                                   source={<AiOutlineBranches />}
@@ -218,28 +271,36 @@ const ProductListDropi: React.FC = () => {
                                     setModalAsExist(!ModalAsExis);
                                   }}
                                 />
-                              </Tooltip>
-                              <Tooltip content="Importar como nuevo producto">
-                                <IconButton
-                                  size="2rem"
-                                  source={<AiOutlinePlus />}
-                                  onClick={function noRefCheck() {
-                                    setModalAsNew(!ModalAsNe);
-                                  }}
-                                />
-                              </Tooltip>
-                            </Box>
-                          </Table.Cell>
-                        </DataTable.Row>
-                      ))}
-                    </>
-                  );
-                }}
-              </ProductsDataProvider>
+                              </Tooltip> */}
+                            <Tooltip content="Importar como nuevo producto">
+                              <IconButton
+                                size="2rem"
+                                source={<AiOutlinePlus />}
+                                onClick={function noRefCheck() {
+                                  setModalAsNew(!ModalAsNe);
+                                  setProductSelected(product);
+                                }}
+                              />
+                            </Tooltip>
+                          </Box>
+                        </Table.Cell>
+                      </DataTable.Row>
+                    ))
+                  : ''}
+              </>
             </DataTable>
           </Layout>
         </Page.Body>
       </Page>
+      {modalIsOpenImg ? (
+        <ModalImgs
+          toogle={modalIsOpenImg}
+          setToogle={setModalIsOpenImg}
+          objImgs={objImgs}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 };

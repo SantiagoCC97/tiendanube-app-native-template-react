@@ -78,7 +78,7 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
 
 
 
-  const onGetProducts = async () => {
+  const onGetProducts = async (keyword:string = '', category:string = '') => {
     const productsFetched : IprodFetched[] = [] ;
     const data = tokenforCategories;
 
@@ -98,11 +98,11 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       'pageSize': 10,//pageSize,
       'order_type': "desc", //order_type,
       'order_by': "id",//order_by,
-      'keywords': '',// keywords-------------------------------------------------,
+      'keywords': keyword,// keywords-------------------------------------------------,
       'active': true,
       'userVerified': false,// userVerified,
       'stockmayor': 0,// withStock,
-      'category': '',//search_by_category,  //-------------------------------------
+      'category': category,//search_by_category,  //-------------------------------------
       'supplier_id': '',// search_by_warehouse
       'no_count': true,
     });  // data 
@@ -124,6 +124,8 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
      
       if (data.isSuccess) {
 
+        console.log("data",data)
+
         data.objects.forEach((prod: any)  => {
           
           if (prod.type === 'VARIABLE') {
@@ -137,7 +139,6 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
           } 
           productsFetched.push(prod);
         });
-
         setProducts(productsFetched) 
         //setCategories(data.objects);
       } else {
@@ -173,7 +174,7 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       });
   };
 
-  return children({ products, shops, categories, onDeleteProduct, getCategoriesDropi });
+  return children({ products, shops, categories, onDeleteProduct, getCategoriesDropi, onGetProducts });
 };
 
 export default ProductsDataProvider;
