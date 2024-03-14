@@ -24,7 +24,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import ModalAsNew from './ModalAsNew';
 import ModalAsExist from './ModalAsExist';
 import ModalSelectShop from './ModalSelectShop';
-import ProductsDataProvider from './SyncProductsDataProvider';
+import SyncProductsDataProvider from './SyncProductsDataProvider';
 import { IObjImgs } from './SyncProducts.types';
 import ModalImgs from './ModalImgs';
 import { IprodFetched } from './SyncProductsFetched.types';
@@ -61,7 +61,7 @@ const ProductListDropi: React.FC = () => {
         <></>
       )}
 
-      <Page maxWidth="1200px">
+      <Page maxWidth="1200px" maxHeight={"100px"}>
         <Page.Header
           buttonStack={
             <>
@@ -96,7 +96,7 @@ const ProductListDropi: React.FC = () => {
           <Alert title="Alert de ejemplo" show={false}>
             Este es un alert de ejemplo en el header de la página
           </Alert>
-          <ProductsDataProvider>
+          <SyncProductsDataProvider>
             {({ categories, onGetProducts, products }) => {
               setProductx(products);
 
@@ -118,7 +118,7 @@ const ProductListDropi: React.FC = () => {
               };
 
               return (
-                <Box display="flex" flexDirection="column" gap="2">
+                <Box  display="flex" flexDirection="column" gap="2">
                   <Box display="flex" gap="1">
                     <Input.Search
                       placeholder="Buscar"
@@ -132,8 +132,8 @@ const ProductListDropi: React.FC = () => {
                       onChange={onSelectCat}
                     >
                       <Select.Option label="Todas" selected value="" />
-                      {categories.map((category) => (
-                        <Select.Option
+                      {categories.map((category, index) => (
+                        <Select.Option key={index}
                           label={category.name}
                           value={category.name}
                         />
@@ -143,7 +143,7 @@ const ProductListDropi: React.FC = () => {
                 </Box>
               );
             }}
-          </ProductsDataProvider>
+          </SyncProductsDataProvider>
         </Page.Header>
         <Page.Body
           px={{
@@ -229,7 +229,7 @@ const ProductListDropi: React.FC = () => {
                           <Input
                             placeholder="0"
                             type="number"
-                            value={Math.trunc(parseInt(product.stock))}
+                            value={product.stock}
                             disabled={true}
                           />
                         </Table.Cell>

@@ -2,11 +2,12 @@ interface IData{
     id:string,
     name?:string,
     color?:number,
-    desc?:string,
-    price?:string,
-    img?:string,
-    variantesChecked: { [key: string]: boolean };
+    description?:string,
+    sale_price?:string,
+    img:boolean, 
+}
 
-
-
+interface IvarSelected {
+    id: string,
+    checked: boolean
 }

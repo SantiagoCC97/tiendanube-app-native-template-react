@@ -44,7 +44,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
     id: '',
     desc: 'Esta es la descripción proveniente de dropi :)',
     name: 'Datico quemadito',
-    price: 10000,
+    price: "10000",
     variantesChecked: {},
   });
 
@@ -212,7 +212,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
                       setUseImgDropi(!UseImgDropi);
                       setData({
                         ...data,
-                        img: '//srcimg.',
+                        img: true,
                       });
                     }}
                     name="img-dropi"
@@ -247,7 +247,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
                     setUsePrice(!UsePrice);
                     setData({
                       ...data,
-                      price: 10000,
+                      price: "10000",
                     });
                   }}
                 />
@@ -273,7 +273,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
                     setUsePrice(!UsePrice);
                     setData({
                       ...data,
-                      price: 10000,
+                      price: "10000",
                     });
                   }}
                 />

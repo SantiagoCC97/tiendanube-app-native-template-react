@@ -2,22 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useToast } from '@nimbus-ds/components';
 import { useFetch } from '@/hooks';
 import { ICatObj, IProduct, IProductsDataProvider, IShop, InitialState } from './SyncProducts.types';
-import {IprodFetched} from './SyncProductsFetched.types.ts';
+import { IprodFetched, Ivariation } from './SyncProductsFetched.types.ts';
 
 import { useSelector } from 'react-redux';
 
-const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
+const SyncProductsDataProvider: React.FC<IProductsDataProvider> = ({
   children,
 }) => {
   const { addToast } = useToast();
   const { request } = useFetch();
-  const [products, setProducts] = useState< IprodFetched[]>([]);
+  const [products, setProducts] = useState<IprodFetched[]>([]);
   const [shops, setShops] = useState<IShop[]>([]);
   const [categories, setCategories] = useState<ICatObj[]>([]);
-  const tokenforCategories = useSelector((state: InitialState) => state); 
+  const tokenforCategories = useSelector((state: InitialState) => state);
 
   useEffect(() => {
-    onGetShops(); 
+    onGetShops();
     if (tokenforCategories.token != '') {
       getCategoriesDropi();
       onGetProducts()
@@ -63,7 +63,7 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
-      const data = await response.json(); 
+      const data = await response.json();
       if (data.isSuccess) {
         setCategories(data.objects);
       } else {
@@ -78,8 +78,8 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
 
 
 
-  const onGetProducts = async (keyword:string = '', category:string = '') => {
-    const productsFetched : IprodFetched[] = [] ;
+  const onGetProducts = async (keyword: string = '', category: string = '') => {
+    const productsFetched: IprodFetched[] = [];
     const data = tokenforCategories;
 
 
@@ -121,25 +121,34 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
       }
 
       const data = await response.json();
-     
+
       if (data.isSuccess) {
 
-        console.log("data",data)
 
-        data.objects.forEach((prod: any)  => {
-          
+        data.objects.forEach((prod: IprodFetched) => {
+          let label = "";
+
           if (prod.type === 'VARIABLE') {
             let stock = 0;
 
             prod.variations.forEach(
-              (variation: any)   => {
+              (variation: Ivariation) => {
                 stock = stock + parseFloat(variation.stock);
+                variation.attribute_values.map((atributo) => (
+                  label += `${atributo.attribute_name}  ${atributo.value} `
+                ))
+                variation.label = label
+                label = ''
+                variation.isChecked = true
               });
-            prod.stock = stock;
-          } 
+            prod.usageImg = true;
+            prod.stock = Math.trunc(stock);
+          }
+          prod.stock = Math.trunc(prod.stock);
+
           productsFetched.push(prod);
         });
-        setProducts(productsFetched) 
+        setProducts(productsFetched)
         //setCategories(data.objects);
       } else {
         //setCategories([]);
@@ -177,4 +186,4 @@ const ProductsDataProvider: React.FC<IProductsDataProvider> = ({
   return children({ products, shops, categories, onDeleteProduct, getCategoriesDropi, onGetProducts });
 };
 
-export default ProductsDataProvider;
+export default SyncProductsDataProvider;

@@ -1,6 +1,6 @@
 import { Fragment, FC, useState } from 'react';
 import { Button, Card, Modal, Text } from '@nimbus-ds/components';
-import ProductsDataProvider from './SyncProductsDataProvider';
+import SyncProductsDataProvider from './SyncProductsDataProvider';
 import { useSelector, useDispatch } from 'react-redux';
 
 interface MiComponenteProps {
@@ -15,17 +15,19 @@ const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
 
   const dispatch = useDispatch();
 
-  return ( 
+  return (
     <>
-      <ProductsDataProvider>
+      <SyncProductsDataProvider>
         {({ shops }) => {
-
           const selectedShop = (token: string, country: string) => {
-            setTiendaSeleccionada(token); 
-            dispatch({type: "TOKEN",  payload:  {token: token, country: country}  })
-          };
+            setTiendaSeleccionada(token);
+            dispatch({
+              type: 'TOKEN',
+              payload: { token: token, country: country },
+            });
+            setToogle(false);
 
-          
+          };
 
           return (
             <Modal
@@ -34,17 +36,12 @@ const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
               }}
               open={toogle}
             >
-              <Fragment key=".0">
-                <Modal.Header title="Selecciona tienda" />
+              <Fragment>
+                <Modal.Header title="Selecciona Tienda" />
                 <Modal.Body>
- 
-
-
-
                   {shops.map((tienda) => (
-                    <div className="div-pad">
+                    <div className="div-pad" key={tienda._doc.token}>
                       <Card
-                        key={tienda._doc.token}
                         onClick={() =>
                           selectedShop(tienda._doc.token, tienda.country)
                         }
@@ -89,7 +86,7 @@ const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
             </Modal>
           );
         }}
-      </ProductsDataProvider>
+      </SyncProductsDataProvider>
     </>
   );
 };

@@ -4,8 +4,7 @@ interface IData{
     color?:number,
     desc?:string,
     price?:number,
-    img?:string,
-    variantesChecked: { [key: string]: boolean };
+    img?:string, 
 
 
 

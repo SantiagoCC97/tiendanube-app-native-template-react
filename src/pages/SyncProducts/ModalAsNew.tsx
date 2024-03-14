@@ -8,26 +8,16 @@ import {
   Text,
 } from '@nimbus-ds/components';
 import { FormField } from '@nimbus-ds/patterns';
-import { IprodFetched } from './SyncProductsFetched.types';
+import { 
+  IprodFetched,
+  Ivariation,
+} from './SyncProductsFetched.types';
 
 interface MiComponenteProps {
   toogle: boolean;
   setToogle: (flag: boolean) => void;
   ProductSelected: IprodFetched;
 }
-
-interface Variante {
-  id: number;
-  nombre: string;
-}
-
-const var1: Variante = { id: 1, nombre: 'XL / ROJO' };
-const var2: Variante = { id: 2, nombre: 'L / NEGRO' };
-
-const Variantes = {
-  var1,
-  var2,
-};
 
 const ModalAsNew: FC<MiComponenteProps> = ({
   toogle,
@@ -39,40 +29,46 @@ const ModalAsNew: FC<MiComponenteProps> = ({
   const [UsePrice, setUsePrice] = useState<boolean>(true);
   const [UseImgDropi, setUseImgDropi] = useState<boolean>(true);
   const [Step, setStep] = useState<number>(0);
-  const [ProductSelect, setProductSelect] =
-    useState<IprodFetched>(ProductSelected);
+  const [ProductSelect, setProductSelect] = useState<IprodFetched>();
 
   const [data, setData] = useState<IData>({
     id: '',
-    desc: ProductSelect.description,
-    name: ProductSelect.name,
-    price: ProductSelect.sale_price,
-    variantesChecked: {},
+    description: ProductSelected.description,
+    name: ProductSelected.name,
+    sale_price: ProductSelected.sale_price,
+    img: UseImgDropi,
   });
+
+  useEffect(() => {
+    setProductSelect(ProductSelected);
+    setUseImgDropi(ProductSelected.usageImg)
+  }, []);
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = event.target;
+    const {name, value} = event.target;
     setData({
       ...data,
       [name]: value,
     });
   };
 
-  const handleVarChecked = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-
-    setData((prevData) => ({
-      ...prevData,
-      variantesChecked: {
-        ...prevData.variantesChecked,
-        [name]: checked,
-      },
-    }));
+  const handleVarChecked = (variant: Ivariation) => {
+    variant.isChecked = !variant.isChecked;
+    if (ProductSelect) {
+      const index = ProductSelect.variations.findIndex(
+        (variantObject) => variantObject.id === variant.id,
+      );
+      ProductSelect.variations[index] = variant;
+      setProductSelect({ ...ProductSelect });
+    }
   };
 
-  console.log('ProductSelected', ProductSelected);
+  const importProd = () => {
+    // Evaluar DATA... para importacion
+    console.log("sisas")
+  };
 
   return (
     <>
@@ -111,9 +107,9 @@ const ModalAsNew: FC<MiComponenteProps> = ({
 
                       <FormField.Input
                         id="prodname"
-                        name="name"
+                        name={'name'}
                         label="Nombre del producto"
-                        value={data.name}
+                        value={UseNameDropi ? ProductSelect?.name : data.name}
                         onChange={handleInputChange}
                         disabled={UseNameDropi ? true : false}
                       />
@@ -141,8 +137,8 @@ const ModalAsNew: FC<MiComponenteProps> = ({
                       <FormField.Textarea
                         id="proddesc"
                         label="Descripción del producto"
-                        name="desc"
-                        value={data.desc}
+                        name="description"
+                        value={UseDescDropi ? ProductSelect?.description : data.description}
                         onChange={handleInputChange}
                         disabled={UseDescDropi ? true : false}
                       />
@@ -163,33 +159,28 @@ const ModalAsNew: FC<MiComponenteProps> = ({
                           setUseImgDropi(!UseImgDropi);
                           setData({
                             ...data,
-                            img: '//srcimg.',
+                            img: true,
                           });
                         }}
-                        name="img-dropi"
+                        name="usageImg"
                         label="Utilizar la imagen de Dropi"
                       />
                     </Box>
                   </>
-                ) : Step == 1 ? ( // Variantes producto
-                  ProductSelected.variations.length > 0 ? (
-                    <Box display="flex" flexDirection="column" gap="4">
-                      <Text>
+                ) : Step == 1 ? ( // variants producto
+                  ProductSelect && ProductSelect.variations.length > 0 ? (
+                    <Box display="flex" flexDirection="column" gap="4" overflow= "auto"  maxHeight="40vh">
+                      <Text fontSize={"highlight"}>
                         Selecciona las variaciones que quieres importar
                       </Text>
-                      {ProductSelected.variations.map((variante) => (
+                      {ProductSelect?.variations.map((variant) => (
                         <div className="div-pad">
                           <Checkbox
-                            name={variante.id}
-                            checked={
-                              data.variantesChecked[variante.nombre] || false
-                            }
-                            key={variante.id}
-                            label={variante.attribute_values.map(
-                              (atributo: any) =>
-                                `${atributo.attribute_name} ${atributo.value} `,
-                            )}
-                            onChange={handleVarChecked}
+                            name={variant.id}
+                            checked={variant.isChecked}
+                            key={variant.id}
+                            label={variant.label}
+                            onChange={() => handleVarChecked(variant)}
                           />
                         </div>
                       ))}
@@ -208,47 +199,22 @@ const ModalAsNew: FC<MiComponenteProps> = ({
                         setUsePrice(!UsePrice);
                         setData({
                           ...data,
-                          price: 10000,
+                          sale_price: !UsePrice == true ? ProductSelect?.sale_price : '',
                         });
                       }}
                     />
                     <FormField.Input
-                      name="price"
+                      name="sale_price"
                       id="prodprice"
                       label="Precio del producto"
                       type="number"
-                      value={data.price}
+                      value={UsePrice ? ProductSelect?.sale_price : data.sale_price}
                       onChange={handleInputChange}
-                      placeholder=" Ej: 30.000"
                       disabled={UsePrice ? true : false}
                     />
                   </Box>
                 ) : (
-                  <Box display="flex" flexDirection="column" gap="4">
-                    <Text>Determina el precio del producto</Text>
-                    <Checkbox
-                      name="price-drop"
-                      label="Usar precio de dropi"
-                      checked={UsePrice}
-                      onClick={() => {
-                        setUsePrice(!UsePrice);
-                        setData({
-                          ...data,
-                          price: 10000,
-                        });
-                      }}
-                    />
-                    <FormField.Input
-                      name="price"
-                      id="prodprice"
-                      label="Precio del producto"
-                      type="number"
-                      value={data.price}
-                      onChange={handleInputChange}
-                      placeholder=" Ej: 30.000"
-                      disabled={UsePrice ? true : false}
-                    />
-                  </Box>
+                  <></>
                 )}
               </Card.Body>
             </Card>
@@ -280,6 +246,7 @@ const ModalAsNew: FC<MiComponenteProps> = ({
               <Button
                 appearance="primary"
                 onClick={function noRefCheck() {
+                  importProd();
                   setToogle(false);
                 }}
               >
