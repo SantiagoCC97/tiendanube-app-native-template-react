@@ -44,8 +44,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
     id: '',
     desc: 'Esta es la descripción proveniente de dropi :)',
     name: 'Datico quemadito',
-    price: "10000",
-    variantesChecked: {},
+    sale_price: "10000", 
   });
 
   const handleInputChange = (
@@ -247,7 +246,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
                     setUsePrice(!UsePrice);
                     setData({
                       ...data,
-                      price: "10000",
+                      sale_price: "10000",
                     });
                   }}
                 />
@@ -273,7 +272,7 @@ const ModalAsExist: FC<ComponentProps> = ({ toogle, setToogle }) => {
                     setUsePrice(!UsePrice);
                     setData({
                       ...data,
-                      price: "10000",
+                      sale_price: "10000",
                     });
                   }}
                 />

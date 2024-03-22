@@ -110,5 +110,6 @@ export interface IProductsDataProvider {
     onDeleteProduct: (productId: number) => void;
     getCategoriesDropi: () => void;
     onGetProducts: (keywords: string, category: string ) => void;
+    syncProductSubmit: (prod: IprodFetched ) => void;
   }) => React.ReactNode;
 }

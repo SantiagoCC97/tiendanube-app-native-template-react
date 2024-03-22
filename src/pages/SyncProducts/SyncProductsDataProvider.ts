@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 const SyncProductsDataProvider: React.FC<IProductsDataProvider> = ({
   children,
 }) => {
+
   const { addToast } = useToast();
   const { request } = useFetch();
   const [products, setProducts] = useState<IprodFetched[]>([]);
@@ -79,6 +80,7 @@ const SyncProductsDataProvider: React.FC<IProductsDataProvider> = ({
 
 
   const onGetProducts = async (keyword: string = '', category: string = '') => {
+
     const productsFetched: IprodFetched[] = [];
     const data = tokenforCategories;
 
@@ -159,7 +161,40 @@ const SyncProductsDataProvider: React.FC<IProductsDataProvider> = ({
     }
   };
 
+
+  const syncProductSubmit = async (prod: IprodFetched) => {
+    
+    return request<{ prod: IprodFetched }>({
+      url: `/syncproduct`,
+      method: 'POST',   
+      data: prod
+    })
+      .then(() => { 
+        addToast({
+          type: 'success',
+          text: 'Producto sincronizado efectivamente',
+          duration: 4000,
+          id: 'created-token',
+        });
+
+        return true;
+      })
+      .catch(( error)  => {   
+        addToast({
+          type: 'danger',
+          text: "Error al sincronizar el producto.",
+          duration: 4000,
+          id: 'error-creating-token',
+        });
+        return false;
+      });
+  };
+
+
+
+
   const onDeleteProduct = (productId: number) => {
+
     request<IProduct[]>({
       url: `/products/${productId}`,
       method: 'DELETE',
@@ -183,7 +218,7 @@ const SyncProductsDataProvider: React.FC<IProductsDataProvider> = ({
       });
   };
 
-  return children({ products, shops, categories, onDeleteProduct, getCategoriesDropi, onGetProducts });
+  return children({ products, shops, categories, onDeleteProduct, getCategoriesDropi, onGetProducts, syncProductSubmit });
 };
 
 export default SyncProductsDataProvider;
