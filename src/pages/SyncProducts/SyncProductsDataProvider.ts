@@ -33,6 +33,8 @@ const SyncProductsDataProvider: React.FC<IProductsDataProvider> = ({
       method: 'GET',
     })
       .then((response) => {
+
+        console.log("holi amix", response.content)
         setShops(response.content);
       })
       .catch((error) => {

@@ -92,12 +92,9 @@ export interface IProduct {
 
 
 export interface IShop {
-  _doc: {
     country: string;
     token: string;
     shop_name: string;
-  }
-  country: string;
 }
 
 

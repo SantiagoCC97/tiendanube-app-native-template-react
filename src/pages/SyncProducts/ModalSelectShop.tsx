@@ -18,7 +18,8 @@ const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
   return (
     <>
       <SyncProductsDataProvider>
-        {({ shops }) => {
+        {({ shops }) => { 
+
           const selectedShop = (token: string, country: string) => {
             setTiendaSeleccionada(token);
             dispatch({
@@ -40,13 +41,14 @@ const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
                 <Modal.Header title="Selecciona Tienda" />
                 <Modal.Body>
                   {shops.map((tienda) => (
-                    <div className="div-pad" key={tienda._doc.token}>
+
+                    <div className="div-pad" key={tienda.token}>
                       <Card
                         onClick={() =>
-                          selectedShop(tienda._doc.token, tienda.country)
+                          selectedShop(tienda.token, tienda.country)
                         }
                         backgroundColor={
-                          tiendaSeleccionada === tienda._doc.token
+                          tiendaSeleccionada === tienda.token
                             ? 'primary-surface'
                             : 'neutral-surface'
                         }
@@ -59,7 +61,7 @@ const ModalSelectShop: FC<MiComponenteProps> = ({ toogle, setToogle }) => {
                             src=" assets/images/logodropi.png"
                           />
                           <Text fontSize="highlight" lineHeight="base">
-                            {tienda._doc.shop_name}
+                        {tienda.shop_name} 
                           </Text>
                         </div>
                       </Card>
